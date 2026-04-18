@@ -1,0 +1,56 @@
+[package]
+name = "pairtools"
+version = "0.1.0"
+edition = "2021"
+description = "Fast Rust implementation of pairtools for Hi-C data processing"
+license = "MIT"
+
+[[bin]]
+name = "pairtools"
+path = "src/main.rs"
+
+[dependencies]
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# SAM/BAM parsing (replaces pysam)
+rust-htslib = "0.46"
+
+# Compression (gzip, lz4)
+flate2 = "1"
+lz4_flex = "0.11"
+
+# Parallelism
+rayon = "1.10"
+
+# Logging
+log = "0.4"
+env_logger = "0.11"
+
+# Error handling
+anyhow = "1"
+thiserror = "2"
+
+# Performance
+memmap2 = "0.9"
+tempfile = "3"
+
+# CSV/TSV for dedup
+csv = "1.3"
+
+# Statistics (replaces numpy/scipy)
+ndarray = "0.16"
+kdtree = "0.2"
+
+# YAML for stats output (optional)
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+
+# Iterator tools
+itertools = "0.13"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
