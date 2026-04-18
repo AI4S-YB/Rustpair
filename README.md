@@ -22,9 +22,12 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 git clone <repo-url>
 cd pairtools-rs
 cargo build --release
+
 ```
-# Binary will be at target/release/pairtools
-🔧 System Dependencies
+Binary will be at target/release/pairtools
+
+## 🔧 System Dependencies
+
 <details> <summary><b>Ubuntu / Debian</b></summary>
 bash
 sudo apt install libz-dev libbz2-dev liblzma-dev libcurl4-openssl-dev
@@ -32,9 +35,10 @@ sudo apt install libz-dev libbz2-dev liblzma-dev libcurl4-openssl-dev
 bash
 brew install zlib xz
 </details>
-📖 Usage
+
+##  📖 Usage
+
 ```
-text
 pairtools [OPTIONS] <COMMAND>
 
 Commands:
@@ -47,11 +51,11 @@ Options:
   -v, --verbose...  Increase logging verbosity (-v info, -vv debug)
   -h, --help        Print help
   -V, --version     Print version
-🔄 parse — SAM/BAM to pairsam Conversion
+```
+## 🔄 parse — SAM/BAM to pairsam Conversion
 Convert aligned SAM/BAM files to standard pairs format, automatically detecting pairing relationships, chimeric reads, and duplicates.
 
-Syntax
-bash
+```
 pairtools parse <SAM_PATH> <CHROMS_PATH> [OPTIONS]
 Required Arguments
 Argument	Description
@@ -80,18 +84,23 @@ all	Expand all walk combinations into multiple rows
 Examples
 bash
 ```
-# Basic usage
+##  Basic usage
 ```
 pairtools parse aligned.sam chrom.sizes -o output.pairsam
 ```
-# Read BAM from stdin
+##  Read BAM from stdin
+```
 samtools view -h input.bam | pairtools parse - chrom.sizes -o output.pairsam
-
-# Drop SAM fields, output pure pairs format
+```
+## Drop SAM fields, output pure pairs format
+```
 pairtools parse input.bam chrom.sizes --drop-sam -o output.pairs
+```
 
-# Use 3' unique policy for chimeric reads
+## Use 3' unique policy for chimeric reads
+```
 pairtools parse input.bam chrom.sizes --walks-policy 3unique -o output.pairsam
+```
 Output Format (pairsam)
 text
 ## pairs format v1.0.0
@@ -114,8 +123,7 @@ DD	PCR duplicate (marked after dedup)
 📊 sort — Sorting
 Sort pairs/pairsam files by chromosome and position, with multi-threaded parallel support.
 
-Syntax
-bash
+```
 pairtools sort [PAIRS_PATH] [OPTIONS]
 Options
 Option	Default	Description
@@ -128,14 +136,17 @@ Option	Default	Description
 --p2	pos2	Column name/index for second position
 --pt	pair_type	Column name/index for pair type
 Examples
-bash
-# Basic sorting
+```
+
+## Basic sorting
+```
 pairtools sort input.pairsam -o sorted.pairsam
-
-# Use 16 threads, 4GB memory
+```
+## Use 16 threads, 4GB memory
+```
 pairtools sort input.pairsam -o sorted.pairsam --nproc 16 --memory 4G
-
-# Pipeline usage
+```
+## Pipeline usage
 pairtools parse ... | pairtools sort - -o sorted.pairsam
 Algorithm
 Data is split into chunks and sorted in parallel using rayon
@@ -144,15 +155,14 @@ Sorted chunks are merged via k-way merge (min-heap)
 
 Sort key: (chrom1, chrom2, pos1, pos2, pair_type)
 
-🔍 dedup — Deduplication
+## 🔍 dedup — Deduplication
 Remove PCR/optical duplicates using an online sliding window algorithm, without loading all data into memory.
 
 Syntax
 bash
 pairtools dedup [PAIRS_PATH] [OPTIONS]
 ⚠️ Note: Input must be pre-sorted! Typically used after sort.
-
-Options
+```
 Option	Default	Description
 -o, --output	"" (stdout)	Deduplicated output file
 --output-dups	none	Separate output file for reads marked as duplicates
@@ -161,16 +171,21 @@ Option	Default	Description
 --mark-dups	enabled	Mark duplicates as DD instead of removing them
 --keep-parent-id	disabled	Append parent read ID to duplicate rows
 Examples
-bash
+```
+
 # Basic deduplication
+```
 pairtools sort input.pairsam -o sorted.pairsam && \
 pairtools dedup sorted.pairsam -o deduped.pairsam
-
+```
 # Separate duplicate reads to a different file
+```
 pairtools dedup sorted.pairsam -o deduped.pairsam --output-dups dups.pairsam
-
-# Relax tolerance to 10bp
+```
+## Relax tolerance to 10bp
+```
 pairtools dedup sorted.pairsam -o deduped.pairsam --max-mismatch 10
+```
 Algorithm
 Maintains a sliding window, comparing only nearby candidate pairs
 
@@ -181,7 +196,8 @@ Pairs on the same chromosome, same strand, and within max_mismatch position are 
 🔗 Typical Workflow
 Step-by-step
 bash
-# Complete Hi-C data processing pipeline
+## Complete Hi-C data processing pipeline
+```
 pairtools parse aligned.bam chrom.sizes \
   --drop-sam \
   -o raw.pairs && \
@@ -191,12 +207,14 @@ pairtools sort raw.pairs \
 pairtools dedup sorted.pairs \
   --output-dups dups.pairs \
   -o final.pairs
+```
 One-liner Pipeline
-bash
+```
 pairtools parse aligned.bam chrom.sizes --drop-sam -o - | \
 pairtools sort - --nproc 16 -o - | \
 pairtools dedup - -o final.pairs --output-dups dups.pairs
-⚡ Performance Recommendations
+```
+## ⚡ Performance Recommendations
 Command	Bottleneck	Recommendation
 parse	I/O	Use SSD/NVMe for significantly improved throughput
 sort	CPU + Memory	Set --nproc to number of cores; adjust --memory based on available RAM
