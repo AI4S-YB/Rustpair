@@ -1,5 +1,5 @@
 # Rustpair
-A Rust rewrite of pairtools for processing paired-end Hi-C sequencing data files.
+A Rust rewrite of pairtools for processing paired-end Hi-C/MicroC sequencing data files.
 
 https://img.shields.io/badge/rust-1.75+-orange.svg
 https://img.shields.io/badge/license-MIT-blue.svg
