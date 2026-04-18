@@ -16,12 +16,13 @@ Memory Safety	GC-managed	Compile-time guarantees
 📦 Building from Source
 bash
 # Requires Rust toolchain (>= 1.75)
+```
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 git clone <repo-url>
 cd pairtools-rs
 cargo build --release
-
+```
 # Binary will be at target/release/pairtools
 🔧 System Dependencies
 <details> <summary><b>Ubuntu / Debian</b></summary>
@@ -32,7 +33,7 @@ bash
 brew install zlib xz
 </details>
 📖 Usage
-
+```
 text
 pairtools [OPTIONS] <COMMAND>
 
@@ -78,9 +79,11 @@ mask	Mark chimeric pairs as WW (masked)
 all	Expand all walk combinations into multiple rows
 Examples
 bash
+```
 # Basic usage
+```
 pairtools parse aligned.sam chrom.sizes -o output.pairsam
-
+```
 # Read BAM from stdin
 samtools view -h input.bam | pairtools parse - chrom.sizes -o output.pairsam
 
